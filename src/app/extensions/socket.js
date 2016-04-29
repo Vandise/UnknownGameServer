@@ -1,8 +1,18 @@
-//
-// Handles basic socket connection information
-//  Imports socket channels
-//
-
+/*************************************************************************
+ *
+ * socket.js
+ *
+ *  Loads groups of socket requests that the server can
+ *  send/receive.
+ *
+ *  Handles two socket messages:
+ *    connection:
+ *      adds the socket id to the server session
+ *    disconnect:
+ *      removes the socket id from the server session
+ *
+ *************************************************************************/
+ 
 export default (server) => {
   server.logger.info("Loaded socket extension.");
 

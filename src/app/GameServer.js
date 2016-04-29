@@ -1,3 +1,21 @@
+/*************************************************************************
+ *
+ * GameServer.js
+ *
+ *  Wrapper for required components throughout the gameserver.
+ *  Everything aside from spinning up the server should be treated as
+ *  as extension or channel.
+ *
+ *  Extensions:
+ *    Anything that adds functionality to the gameserver. DB wrappers,
+ *    AI, Encryption, etc.
+ *
+ *  Channels:
+ *    Channels are simply groups of socket requests that the server can
+ *    send/receive. Channels are loaded by the socket extension.
+ *
+ *************************************************************************/
+
 import ConfReader    from './core/conf/ConfReader';
 import LoggerFactory from './core/logger/LoggerFactory';
 import express       from 'express';
@@ -43,7 +61,7 @@ export default class GameServer {
   	}
 
     server.listen(app.get('port'), () => {
-      this.logger.info('GameServerlistening on port '+app.get('port')+' in '+this.env+' mode');
+      this.logger.info('GameServer listening on port '+app.get('port')+' in '+this.env+' mode');
     });
   }
 
