@@ -37,8 +37,8 @@ export default class GameServer {
     this.port     = 9090;
     this.session  = {};
     this.express  = express;
-    this.eEmitter = events.EventEmitter;
     this.event    = new events.EventEmitter();
+    this.EventEmitter = events.EventEmitter;
     
     if(argv.indexOf("-e") != -1) { this.env = argv[(argv.indexOf("-e") + 1)]; }
     if(argv.indexOf("-p") != -1) { this.port = argv[(argv.indexOf("-p") + 1)]; }
