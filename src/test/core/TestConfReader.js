@@ -34,7 +34,7 @@ describe('ConfReader ',function(){
   /** @test {ConfReader#read} */
   describe('ConfReader#read',function(){
     it('Expect database name to equals null',function(){
-      let result = confReader.read('./src/conf/test.yml');
+      let result = confReader.read('./src/conf/fail.yml');
       expect(result).to.equals(null);
     });
   });
