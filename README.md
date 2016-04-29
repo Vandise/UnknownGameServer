@@ -52,3 +52,15 @@ Extensions are anything that adds functionality to the game server. By itself th
 
 ## Contributing
 If you wish to contribute, send me an email before sending a pull request or creating an issue. I know the game I want to build and it'll be great for other contributors to understand its goals.
+
+### Tools
+There are a couple tools with gulp in place to accelerate development:
+```
+gulp watch
+```
+Watches for changes in the src/ directory. It will re-compile the server and run the unit tests.
+
+```
+gulp serve
+```
+Spins up nodemon and runs the server. On each change i.e. with gulp watch, the game server will restart. This is more for testing while developing the client. gulp serve must be run on a separate port from gulp watch due to the watch task running the unit tests (which spins up instances of the server). The gulp file needs some refining once development starts on the client.
