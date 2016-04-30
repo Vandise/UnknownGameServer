@@ -18,18 +18,9 @@ let disconnect = () => {
 };
 
 describe("Channels::Game", () => {
-/*
-  before( () => {
-    GS = new GameServer(['-e','test']);
-    GS.main();
-  });
 
-  after(() => {
-    GS.close();
-  });
-*/
   describe("On initial connect without a cookie", () => {
-    
+
     before( () => {
       socket = io.connect(host, options);
     });
@@ -43,5 +34,12 @@ describe("Channels::Game", () => {
     });
 
   });
+
+  //
+  // TODO:
+  //   If there is a way to create a cookie that the socket will detect
+  //   create the test here that will detect a response component of "game"
+  //   the response will be tested with a login event later on, but this
+  //   behavior should be included.
 
 });
