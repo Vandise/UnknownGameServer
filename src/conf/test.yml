@@ -4,7 +4,7 @@ node:
   clusterMode: no
 
 logger:
-  level: 0
+  level: error
 
 # Database configuration
 database:
