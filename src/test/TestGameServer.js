@@ -4,7 +4,7 @@ import io         from 'socket.io-client';
 let chai    = require('chai');
 let sinon   = require("sinon");
 let expect  = chai.expect;
-let host    = 'http://localhost:9090'; 
+let host    = 'http://localhost:9091'; 
 let socket  = null;
 let GS      = null;
 let options = {
@@ -19,7 +19,7 @@ let disconnect = () => {
 describe('GameServer', () => {
 
   before( () => {
-    GS = new GameServer(['-e','test']);
+    GS = new GameServer(['-e','test', '-p', '9091']);
     GS.main();
   });
 
