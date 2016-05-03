@@ -5,6 +5,6 @@ node_js:
 before_script:
   - npm install -g gulp
   - gulp
-  - sh ci/rethinkdb.sh
+  - sudo add-apt-repository ppa:rethinkdb/ppa && sudo apt-get update && sudo apt-get install rethinkdb
   - node ./db/migrate -e test
   - node ./dist/server -e test &
