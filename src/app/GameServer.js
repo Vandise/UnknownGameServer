@@ -24,8 +24,8 @@ import fs            from 'fs';
 import events        from 'events';
 import socketio      from 'socket.io';
 
-let app    = express();
-let server = http.createServer(app);
+//let app    = express();
+//let server = http.createServer(app);
 
 export default class GameServer {
 
@@ -33,8 +33,10 @@ export default class GameServer {
     this.fs       = fs;
     this.io       = null;
     this.env      = "dev";
+    this.app      = express();
     this.root     = __dirname;
     this.port     = 9090;
+    this.server   = http.createServer(this.app);
     this.session  = {};
     this.express  = express;
     this.event    = new events.EventEmitter();
@@ -51,8 +53,8 @@ export default class GameServer {
     let dir = this.fs.readdirSync(this.root+'/extensions/');
     let index = 0;
     
-    app.set('port', this.port);
-    this.io = socketio.listen(server);
+    this.app.set('port', this.port);
+    this.io = socketio.listen(this.server);
     
   	for (index in dir) {
   		if (dir[index].match(/[a-z]\.js/)) {
@@ -60,13 +62,13 @@ export default class GameServer {
   		}
   	}
 
-    server.listen(app.get('port'), () => {
-      this.logger.info('GameServer listening on port '+app.get('port')+' in '+this.env+' mode');
+    this.server.listen(this.app.get('port'), () => {
+      this.logger.info('GameServer listening on port '+this.app.get('port')+' in '+this.env+' mode');
     });
   }
 
   close() {
-    server.close();
+    this.server.close();
   }
 
 }
