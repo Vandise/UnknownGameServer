@@ -17,14 +17,6 @@ describe('ConfReader ',function(){
 
   /** @test {ConfReader#read} */
   describe('ConfReader#read',function(){
-    it('Expect database name to equals "test"',function(){
-      let result = confReader.read('./src/conf/dev.yml');
-      expect(result.database.name).to.equals('test');
-    });
-  });
-
-  /** @test {ConfReader#read} */
-  describe('ConfReader#read',function(){
     it('Expect database name to equals null',function(){
       let result = confReader.read('./src/conf/dev.yml');
       expect(result.database.toto).to.equals(undefined);
