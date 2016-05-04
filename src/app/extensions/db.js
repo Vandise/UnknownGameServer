@@ -7,4 +7,5 @@ export default (server, session) => {
     server.logger.info("Connected to database: " + server.configuration.database.host + " on port " + server.configuration.database.port);
     return conn;
   });
+  server.logger.info("Loaded DB extension.");
 };

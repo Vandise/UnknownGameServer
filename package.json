@@ -27,6 +27,7 @@
     "yargs": "^3.16.1"
   },
   "devDependencies": {
+    "bcrypt": "^0.8.6",
     "chai": "3.0.0",
     "del": "2.0.2",
     "express": "^4.13.4",

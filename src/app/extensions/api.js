@@ -10,6 +10,6 @@ export default (server, session) => {
     }));
 	});
 
-  server.logger.info("API Extension loaded.");
+  server.logger.info("Loaded API extension.");
 
 };
