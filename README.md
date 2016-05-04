@@ -14,6 +14,12 @@ this might take awhile.
 npm install
 ```
 
+### Migrate the Database
+This gameserver utilizes rethink DB. You will have to install it via a package manager before running this command:
+```
+node ./db/migrate -e dev
+```
+
 ### Run Tests
 and watch them pass hopefully.
 ```
@@ -64,3 +70,9 @@ Watches for changes in the src/ directory. It will re-compile the server and run
 gulp serve
 ```
 Spins up nodemon and runs the server. On each change i.e. with gulp watch, the game server will restart. This is more for testing while developing the client. gulp serve must be run on a separate port from gulp watch due to the watch task running the unit tests (which spins up instances of the server). The gulp file needs some refining once development starts on the client.
+
+#### Migrations
+To create the DB structure, manage users, permissions, etc; use migrations. Name the file whatever you like (generally a timestamp or data works to keep the migrations in order) and export a function that accepts three parameters:
+- the database driver
+- a connection object
+- configuration settings for the current environment
