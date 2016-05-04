@@ -1,12 +1,13 @@
 # UnknownGameServer [![Build Status](https://travis-ci.org/Vandise/UnknownGameServer.svg?branch=master)](https://travis-ci.org/Vandise/UnknownGameServer)
 
-The game server for an unknown multiplayer arcade game. Written with ES6, SocketIO, and possibly RethinkDB to simplify some of the server logic on handling player x-y coordinates.
+The game server for an unknown multiplayer arcade game. Written with ES6, SocketIO, and RethinkDB to simplify some of the server logic on handling player x-y coordinates and actions.
 
 ## Getting Started
 Major Dependencies:
 * Node >= 5.0
 * NPM >= 3.5
 * Mocha >= 2.2
+* RethinkDB 2.3.1
 
 ### Install Dependencies
 this might take awhile.
@@ -55,6 +56,9 @@ Channels are simply all the messages and events a particular socket in the serve
 
 ### Extensions
 Extensions are anything that adds functionality to the game server. By itself the game server is simply an object that spins up a server based off of the configuration settings it's passed. Prior to starting up the server, it loads every module in the extensions directory and passes an instance of itself as a parameter. The GameServer object has no knowledge to the functionality of these modules -- making each component of the server as easily testable as web sockets allow you to test. 
+
+#### Input Validation
+User input needs to be validated on the client side as well as on the server. Why? Because any individual could open up their developers console within the game, capture the socket connection, read event messages, attempt to emit messages, etc. There will be a handshake between the client and server to validate the socket and the messages it sends. Games are always hackable, it's just my job as a developer to make it as frustrating as possible.
 
 ## Contributing
 If you wish to contribute, send me an email before sending a pull request or creating an issue. I know the game I want to build and it'll be great for other contributors to understand its goals.
