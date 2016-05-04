@@ -30,10 +30,12 @@ import socketio      from 'socket.io';
 export default class GameServer {
 
   constructor(argv) {
+    this.r        = null;
     this.fs       = fs;
     this.io       = null;
     this.env      = "dev";
     this.app      = express();
+    this.conn     = null;
     this.root     = __dirname;
     this.port     = 9090;
     this.server   = http.createServer(this.app);
@@ -68,6 +70,9 @@ export default class GameServer {
   }
 
   close() {
+    this.conn.then((conn) => {
+      conn.close();
+    });
     this.server.close();
   }
 

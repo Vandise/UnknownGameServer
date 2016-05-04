@@ -11,7 +11,7 @@ let statusCode = (key) => {
 
 export default (server, session) => {
   let socket = session.socket;
-
+  
   //
   // TODO:
   //  When I decide on a database, query the DB and look for a user
