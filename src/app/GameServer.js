@@ -24,9 +24,6 @@ import fs            from 'fs';
 import events        from 'events';
 import socketio      from 'socket.io';
 
-//let app    = express();
-//let server = http.createServer(app);
-
 export default class GameServer {
 
   constructor(argv) {
@@ -52,27 +49,25 @@ export default class GameServer {
   }
 
   main() {
-    let dir = this.fs.readdirSync(this.root+'/extensions/');
-    let index = 0;
-    
     this.app.set('port', this.port);
     this.io = socketio.listen(this.server);
     
+    let dir = this.fs.readdirSync(this.root+'/extensions/');
+    let index = 0;
+
   	for (index in dir) {
   		if (dir[index].match(/[a-z]\.js/)) {
   			require('./extensions/' + dir[index])(this);
   		}
   	}
-
+    
     this.server.listen(this.app.get('port'), () => {
       this.logger.info('GameServer listening on port '+this.app.get('port')+' in '+this.env+' mode');
     });
   }
 
   close() {
-    this.conn.then((conn) => {
-      conn.close();
-    });
+    this.conn.close();
     this.server.close();
   }
 

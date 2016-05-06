@@ -1,19 +1,35 @@
-
-import io         from 'socket.io-client';
+import r       from 'rethinkdb';
+import io      from 'socket.io-client';
+import Auth    from '../../app/extensions/objects/input/auth';
+import config  from '../helpers/db';
 
 let chai    = require('chai');
 let sinon   = require("sinon");
 let expect  = chai.expect;
 let host    = 'http://localhost:9090'; 
 let socket  = null;
+let auth    = new Auth();
 let options = {
   transports: ['websocket'],
   'force new connection': true
 };
 
-let disconnect = () => {
-  socket.disconnect();
-};
+var conn = null;
+
+/*
+r.connect(config, (err, c) => {
+  if (err) throw err;
+  conn = c;
+  r.table("accounts").insert({
+    username: "username",
+    password: auth.hash("password")
+  }).run(c, (err, result) => {
+    if(err) throw err;
+    console.log("created account");
+    return result;
+  });
+});
+*/
 
 describe("Channels::Login", () => {
 
@@ -27,7 +43,35 @@ describe("Channels::Login", () => {
       socket.emit("login", {});
       socket.on("login", (resp) => {
         expect(resp.code).to.equals(3);
-        setTimeout(disconnect, 50);
+        socket.disconnect();
+        done(); 
+      });
+    });
+
+  });
+
+  describe("When a user is found", () => {
+
+    before( () => {
+      socket = io.connect(host, options);
+    });
+
+    after( () => {
+      /*
+      r.table("accounts").delete({durability: "soft"}).run(conn, (err, result) => {
+        if(err) throw err;
+      });
+      */
+    });
+
+    it("Should send a success status code", (done) => {
+      let input = [];
+      input.push({name: "username", value: "username"});
+      input.push({name: "password", value: "password"});
+      socket.emit("login", input);
+      socket.on("login", (resp) => {
+        expect(resp.code).to.equals(1);
+        socket.disconnect();
         done(); 
       });
     });

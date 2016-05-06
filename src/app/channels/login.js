@@ -5,38 +5,77 @@ let LoginStatus = {
   notfound: "(3) User not found."
 };
 
+let loginExpects = {
+	username: /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/,
+	password: /^.{5,512}$/
+};
+
 let statusCode = (key) => {
   return Object.keys(LoginStatus).indexOf(key) > -1 ? Object.keys(LoginStatus).indexOf(key) : 0;
 };
 
 export default (server, session) => {
   let socket = session.socket;
-  
-  //
-  // TODO:
-  //  When I decide on a database, query the DB and look for a user
-  //  for both the cookie and socket login event
-  //
+
   if (socket.request.cookies.sessionID) {
+    
     let user = null;
     if(user !== null) {
+      
       server.logger.info("Authorizing user via cookie.");
       session.event.emit('logged_in', true);
+      
     } else {
+      
       server.logger.info("Authorizing user via cookie failed.");
       session.event.emit('logged_in', false);
+      
     }
+    
   }
 
   socket.on("login", (data) => {
-    let user = null;
-    if(user === null) {
+    let result = server.input.auth.process(loginExpects, data);
+    
+    if(!result) {
+      
+      server.logger.info("Data validation failed.");
       socket.emit('login', {'status': LoginStatus.notfound, 'code': statusCode("notfound")});
+      
     } else {
-      // probably won't be used on the client, but will serve well for debugging purposes
-      // just need to test that the logged_in event was called in mocha, but no DB yet!
-      socket.emit('login', {'status': LoginStatus.success, 'code': statusCode("success")});
-      session.event.emit("logged_in", true);
+      
+      server.r.table("accounts").filter(server.r.row('username').eq(result.username)).limit(1).run(server.conn, (err, cursor) => {
+
+        if(err) {
+          server.logger.info("User not found.");
+          socket.emit('login', {'status': LoginStatus.notfound, 'code': statusCode("notfound")});
+          return;
+        }
+        
+        return cursor.toArray((err, records) => {
+          
+          if(err || records[0] === undefined) {
+            socket.emit('login', {'status': LoginStatus.unknown, 'code': statusCode("unknown")});
+            return;
+          }
+          
+          let user = records[0];
+          
+          if(!server.input.auth.compare(result.password, user.password)) {
+            server.logger.info("Username/password not valid.");
+            socket.emit('login', {'status': unauthorized.notfound, 'code': statusCode("unauthorized")});
+            return;
+          }
+          
+          session.user = user;
+          socket.emit('login', {'status': LoginStatus.success, 'code': statusCode("success")});
+          session.event.emit("logged_in", true);
+
+          server.logger.info("Login Success.");
+          
+          return;
+        });
+      });
     }
   });
 
