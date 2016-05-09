@@ -21,4 +21,5 @@ before_script:
   - gulp
   - rethinkdb --daemon
   - node ./db/migrate -e test
+  - node ./db/seed -e test
   - node ./dist/server -e test &
