@@ -14,23 +14,6 @@ let options = {
   'force new connection': true
 };
 
-var conn = null;
-
-/*
-r.connect(config, (err, c) => {
-  if (err) throw err;
-  conn = c;
-  r.table("accounts").insert({
-    username: "username",
-    password: auth.hash("password")
-  }).run(c, (err, result) => {
-    if(err) throw err;
-    console.log("created account");
-    return result;
-  });
-});
-*/
-
 describe("Channels::Login", () => {
 
   describe("When a user isn't found", () => {
@@ -54,14 +37,6 @@ describe("Channels::Login", () => {
 
     before( () => {
       socket = io.connect(host, options);
-    });
-
-    after( () => {
-      /*
-      r.table("accounts").delete({durability: "soft"}).run(conn, (err, result) => {
-        if(err) throw err;
-      });
-      */
     });
 
     it("Should send a success status code", (done) => {
