@@ -53,4 +53,24 @@ describe("Channels::Login", () => {
 
   });
 
+  describe("When an invalid username/password combo is supplied", () => {
+
+    before( () => {
+      socket = io.connect(host, options);
+    });
+
+    it("Should send an unautorized status code", (done) => {
+      let input = [];
+      input.push({name: "username", value: "username"});
+      input.push({name: "password", value: "failedpw"});
+      socket.emit("login", input);
+      socket.on("login", (resp) => {
+        expect(resp.code).to.equals(2);
+        socket.disconnect();
+        done(); 
+      });
+    });
+
+  });
+
 });

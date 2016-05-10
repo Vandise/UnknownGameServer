@@ -63,7 +63,7 @@ export default (server, session) => {
           
           if(!server.input.auth.compare(result.password, user.password)) {
             server.logger.info("Username/password not valid.");
-            socket.emit('login', {'status': unauthorized.notfound, 'code': statusCode("unauthorized")});
+            socket.emit('login', {'status': LoginStatus.unauthorized, 'code': statusCode("unauthorized")});
             return;
           }
           
