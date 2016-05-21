@@ -18,7 +18,13 @@ npm install
 ### Migrate the Database
 This gameserver utilizes rethink DB. You will have to install it via a package manager before running this command:
 ```
-node ./db/migrate -e dev
+node ./db/migrate -e test
+```
+
+### Seed the Test Database
+Populate the test database with some records used by the specs.
+```
+node ./db/seed -e test
 ```
 
 ### Run Tests
