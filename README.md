@@ -1,6 +1,6 @@
 # UnknownGameServer [![Build Status](https://travis-ci.org/Vandise/UnknownGameServer.svg?branch=master)](https://travis-ci.org/Vandise/UnknownGameServer)
 
-The game server for an unknown multiplayer arcade game. Written with ES6, SocketIO, and RethinkDB to simplify some of the server logic on handling player x-y coordinates and actions.
+The game server for an unknown multiplayer arcade game. The game server is the distribution hub for client requests and assorted server events triggered by either user input or conditionals. Aside from notifying the database of its existence so the Connect Server can provide a list of available servers to the client; the game server should have very little database interaction. Database requests should be sent to the Data Server.  
 
 ## Getting Started
 Major Dependencies:
