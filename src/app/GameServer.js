@@ -24,6 +24,8 @@ import fs            from 'fs';
 import events        from 'events';
 import socketio      from 'socket.io';
 
+import ioClient from 'socket.io-client';
+
 export default class GameServer {
 
   constructor(argv) {
@@ -38,11 +40,16 @@ export default class GameServer {
     this.server   = http.createServer(this.app);
     this.session  = {};
     this.express  = express;
-    this.event    = new events.EventEmitter();
+    this.event        = new events.EventEmitter();
     this.EventEmitter = events.EventEmitter;
-    
+    this.loginPort    = 4500;
+    this.loginHost    = 'localhost';
+    this.lsSocket     = null;
+
     if(argv.indexOf("-e") != -1) { this.env = argv[(argv.indexOf("-e") + 1)]; }
     if(argv.indexOf("-p") != -1) { this.port = argv[(argv.indexOf("-p") + 1)]; }
+    if(argv.indexOf("-lh") != -1) { this.loginHost = argv[(argv.indexOf("-lh") + 1)]; }
+    if(argv.indexOf("-lp") != -1) { this.loginPort = argv[(argv.indexOf("-lp") + 1)]; }
 
     this.configuration = new ConfReader().read('dist/conf/'+this.env+'.yml');
     this.logger = LoggerFactory.get('bunyan', {name:'GameServer', level: this.configuration.logger.level});
@@ -51,7 +58,8 @@ export default class GameServer {
   main() {
     this.app.set('port', this.port);
     this.io = socketio.listen(this.server);
-    
+    this.connectLoginServer();
+
     let dir = this.fs.readdirSync(this.root+'/extensions/');
     let index = 0;
 
@@ -64,14 +72,38 @@ export default class GameServer {
     this.server.listen(this.app.get('port'), () => {
       this.logger.info('GameServer listening on port '+this.app.get('port')+' in '+this.env+' mode');
     });
+
+  }
+
+  connectLoginServer() {
+    let lsTimer   = null;
+    const options = {
+      transports: ['websocket'],
+      timeout: 1000
+    };
+    this.lsSocket = ioClient.connect(`http://${this.loginHost}:${this.loginPort}`, options);
+
+    this.logger.info(`Attempting to connect to LS: ${this.loginHost}:${this.loginPort}`);
+
+    lsTimer = setInterval(() => {
+      if (this.lsSocket.connected) {
+        clearInterval(lsTimer);
+        return;
+      }
+      if (!this.lsSocket.connected) {
+        this.logger.info(`Unable to connect to LS: ${this.loginHost}:${this.loginPort}`);
+        return;
+      }
+    }, 2000);
   }
 
   close() {
     let index = 0;
     for (index in this.server.session) {
       let session = this.server.session[index];
-      session.socket.disconnect();
+      session.socket.disconnect(true);
     }
+    this.lsSocket.disconnect(true);
     this.io.close();
     this.conn.close();
     this.server.close();
