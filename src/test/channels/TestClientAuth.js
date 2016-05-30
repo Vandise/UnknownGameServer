@@ -4,7 +4,7 @@ import { CLIENT_VERSION } from '../../app/constants';
 let chai    = require('chai');
 let sinon   = require("sinon");
 let expect  = chai.expect;
-let host    = 'http://localhost:9090'; 
+let host    = 'http://localhost:60000'; 
 let socket  = null;
 let options = {
   transports: ['websocket'],
