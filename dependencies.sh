@@ -13,7 +13,8 @@ do
   pwd
   echo "Installing Package Dependencies: "
   npm install
+  gulp
   echo "Running $repo as Background Process"
-  npm start &
+  node ./dist/server -e test &
   cd "../"
 done
