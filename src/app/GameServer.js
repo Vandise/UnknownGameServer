@@ -42,14 +42,23 @@ export default class GameServer {
     this.express  = express;
     this.event        = new events.EventEmitter();
     this.EventEmitter = events.EventEmitter;
+
     this.loginPort    = 4500;
     this.loginHost    = 'localhost';
     this.lsSocket     = null;
 
+    this.dsPort       = 55960;
+    this.dsHost       = 'localhost';
+    this.dsSocket     = null;
+
     if(argv.indexOf("-e") != -1) { this.env = argv[(argv.indexOf("-e") + 1)]; }
     if(argv.indexOf("-p") != -1) { this.port = argv[(argv.indexOf("-p") + 1)]; }
+
     if(argv.indexOf("-lh") != -1) { this.loginHost = argv[(argv.indexOf("-lh") + 1)]; }
     if(argv.indexOf("-lp") != -1) { this.loginPort = argv[(argv.indexOf("-lp") + 1)]; }
+
+    if(argv.indexOf("-dh") != -1) { this.dsHost = argv[(argv.indexOf("-dh") + 1)]; }
+    if(argv.indexOf("-dp") != -1) { this.dsPort = argv[(argv.indexOf("-dp") + 1)]; }
 
     this.configuration = new ConfReader().read('dist/conf/'+this.env+'.yml');
     this.logger = LoggerFactory.get('bunyan', {name:'GameServer', level: this.configuration.logger.level});
@@ -59,6 +68,7 @@ export default class GameServer {
     this.app.set('port', this.port);
     this.io = socketio.listen(this.server);
     this.connectLoginServer();
+    this.connectDataServer();
 
     let dir = this.fs.readdirSync(this.root+'/extensions/');
     let index = 0;
@@ -68,7 +78,7 @@ export default class GameServer {
   			require('./extensions/' + dir[index])(this);
   		}
   	}
-    
+
     this.server.listen(this.app.get('port'), () => {
       this.logger.info('GameServer listening on port '+this.app.get('port')+' in '+this.env+' mode');
     });
@@ -97,6 +107,28 @@ export default class GameServer {
     }, 2000);
   }
 
+  connectDataServer() {
+    let gsTimer = null;
+    const options = {
+      transports: ['websocket'],
+      timeout: 1000
+    };
+    this.dsSocket = ioClient.connect(`http://${this.dsHost}:${this.dsPort}`, options);
+
+    this.logger.info(`Attempting to connect to DS: ${this.dsHost}:${this.dsPort}`);
+
+    gsTimer = setInterval(() => {
+      if (this.dsSocket.connected) {
+        clearInterval(gsTimer);
+        return;
+      }
+      if (!this.dsSocket.connected) {
+        this.logger.info(`Unable to connect to DS: ${this.dsHost}:${this.dsPort}`);
+        return;
+      }
+    }, 2000);
+  }
+
   close() {
     let index = 0;
     for (index in this.server.session) {
@@ -104,6 +136,7 @@ export default class GameServer {
       session.socket.disconnect(true);
     }
     this.lsSocket.disconnect(true);
+    this.dsSocket.disconnect(true);
     this.io.close();
     this.conn.close();
     this.server.close();
