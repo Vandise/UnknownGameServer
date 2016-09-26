@@ -5,9 +5,8 @@ export default (server, session) => {
     server.dsSocket.emit('fetch_characters', currentUser);
   });
 
-/*
   server.dsSocket.on('fetch_characters', (data) => {
     socket.emit('fetch_characters', data);
   });
-*/
+
 };
